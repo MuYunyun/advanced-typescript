@@ -5224,10 +5224,6 @@ detective@^5.0.2:
     defined "^1.0.0"
     minimist "^1.1.1"
 
-diana@^0.4.8:
-  version "0.4.8"
-  resolved "https://registry.yarnpkg.com/diana/-/diana-0.4.8.tgz#3f0ab13d7ee6d6cb307d0ebcfd7de6b533e523ff"
-
 diana@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/diana/-/diana-1.0.2.tgz#effbbe0ea26ea1302abc088d5e0abc277b5fac66"
