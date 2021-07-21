@@ -1,0 +1,33 @@
+{
+  "name": "diana",
+  "description": "fe tool library",
+  "main": "lib/diana.js",
+  "authors": [
+    "muyunyun"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "tool",
+    "util",
+    "common-util"
+  ],
+  "homepage": "https://github.com/MuYunyun/diana",
+  "private": false,
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "coverage",
+    "docs",
+    "script",
+    "snippets",
+    ".babelrc",
+    ".babelrc",
+    ".eslintignore",
+    ".eslintrc.js",
+    ".gitignore",
+    "karma.conf.js",
+    "tag_database"
+  ]
+}

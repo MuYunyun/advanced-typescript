@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "outDir": "",
+    "strict": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "target": "es5",
+    "lib": [
+      "es6",
+      "ES2016",
+      "dom"
+    ],
+    "moduleResolution": "node",
+    "declaration": true,
+    "module": "es6",
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "noImplicitThis": false,
+    "removeComments": false,
+    "allowJs": true
+  },
+  "include": [
+    "test/",
+    "src/",
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
