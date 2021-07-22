@@ -28,4 +28,8 @@ type TupleInfer<T> = T extends [infer A, ...(infer B)[]] ? [A, B] : never
 // type test8 = TupleInfer<[string, number, boolean]> // [string, number | boolean]
 
 /** ---------- curryV0 ---------- */
-
+type CurryV0<P extends any[], R> =
+  HasTail<P> extends true ? CurryV0<Tail<P>, R> : R
+declare function curryV0<P extends any[], R>(f: (...args: P) => R): CurryV0<P, R>
+const toCurry02 = (name: string, age: number, single: boolean) => true
+const curried02 = curryV0(toCurry02)
