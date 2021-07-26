@@ -29,7 +29,42 @@ type TupleInfer<T> = T extends [infer A, ...(infer B)[]] ? [A, B] : never
 
 /** ---------- curryV0 ---------- */
 type CurryV0<P extends any[], R> =
-  HasTail<P> extends true ? CurryV0<Tail<P>, R> : R
+  (arg0: Head<P>) => HasTail<P> extends true ? CurryV0<Tail<P>, R> : R
+
 declare function curryV0<P extends any[], R>(f: (...args: P) => R): CurryV0<P, R>
 const toCurry02 = (name: string, age: number, single: boolean) => true
 const curried02 = curryV0(toCurry02)
+const test9 = curried02('Jane')(26)(true)
+
+/** ---------- curryV1 ---------- */
+// background:
+const toCurry03 = (name: string, age: number, ...nicknames: string[]) => true
+const curried03 = curryV0(toCurry03)
+const test10 = curried03('Jane')(26)('JJ', 'Jini') // error: Expected 1 arguments, but got 2.
+
+/** ---------- curryV0 ---------- */
+type CurryV1<P extends any[], R> =
+  (arg0: Head<P>, ...rest: Tail<P>) => HasTail<P> extends true ? CurryV1<Tail<P>, R> : R
+
+declare function curryV1<P extends any[], R>(f: (...args: P) => R): CurryV1<P, R>
+
+const toCurry04 = (name: string, age: number, ...nicknames: string[]) => true
+const curried04 = curryV1(toCurry04)
+// 返回结果是 CurryV1<[age: number, ...nicknames: string[]], boolean> 不太对, todo
+const test11 = curried04('Jane', 26, 'JJ', 'Jini')
+// expect error
+const test12 = curried04('Jane', 26, 'JJ')(26, 'JJ')
+
+// 接着要修正上述函数中后续传的参数类型
+// 但是这样子书写, T 为 any[] 会照成 Tail<T> 失效。
+type CurryV2<P extends any[], R> =
+  <T extends any[]>(args: T) => HasTail<P> extends true ? CurryV2<Tail<T>, R> : R
+
+declare function curryV2<P extends any[], R>(f: (...args: P) => R): CurryV2<P, R>
+
+const toCurry05 = (name: string, age: number, ...nicknames: string[]) => true
+const curried05 = curryV2(toCurry04)
+const test13 = curried05('Jane', 26, 'JJ', 'Jini')
+
+// read Recursive types
+
