@@ -29,3 +29,13 @@ const test9 = curried02('Jane')(26)(true)
 ```
 
 此处 declare 用于声明了 curryV0 函数类型。咋一看为啥可以直接调用 `curryV0(toCurry02)`, 想了一下, 其实此处的 curryV0 有一码双关的意思, 即既运行`Typescript 类型函数`又暗含运行`Javascript 函数`。
+
+3. extends 字段语义
+
+如下 case 结果
+
+```ts
+type c = { a: true, b: false }
+type d = c extends { a: true } ? true : false // true
+```
+

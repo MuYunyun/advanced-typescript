@@ -66,5 +66,23 @@ const toCurry05 = (name: string, age: number, ...nicknames: string[]) => true
 const curried05 = curryV2(toCurry04)
 const test13 = curried05('Jane', 26, 'JJ', 'Jini')
 
-// read Recursive types
+// Recursive types
+/** -------- Last -------- */
+type Last<T extends any[]> = HasTail<T> extends true ? Last<Tail<T>> : Head<T>
+type test14 = Last<[string, number, boolean]> // boolean
 
+/** -------- Length -------- */
+type Length<T extends any[]> = T['length']
+type test15 = Length<[]>
+type test16 = Length<[any, any]>
+type test17 = Length<[any, any, any]>
+
+/** -------- Prepend -------- */
+type Prepend2<E, T extends any[]> = ((head: E, ...args: T) => any) extends ((...args: infer U) => any) ? U : T
+type test18 = Prepend2<string, [number]> // [string, number]
+
+/** -------- Drop -------- */
+type Drop<> = {
+
+}
+type test19 = Drop<1, [string, number, boolean]> // [number, boolean]
