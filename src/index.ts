@@ -78,11 +78,15 @@ type test16 = Length<[any, any]>
 type test17 = Length<[any, any, any]>
 
 /** -------- Prepend -------- */
+// todo
 type Prepend2<E, T extends any[]> = ((head: E, ...args: T) => any) extends ((...args: infer U) => any) ? U : T
 type test18 = Prepend2<string, [number]> // [string, number]
 
 /** -------- Drop -------- */
-type Drop<> = {
-
-}
+type Drop<N extends number, T extends any[], I extends any[] = []> =
+  Length<I> extends N
+  ? T
+  : Drop<N, Tail<T>, Prepend2<any, I>>
 type test19 = Drop<1, [string, number, boolean]> // [number, boolean]
+
+/** ---------- curryV3 ---------- */
