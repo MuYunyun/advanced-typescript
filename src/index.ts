@@ -56,15 +56,17 @@ const test11 = curried04('Jane', 26, 'JJ', 'Jini')
 const test12 = curried04('Jane', 26, 'JJ')(26, 'JJ')
 
 // 接着要修正上述函数中后续传的参数类型
-// 但是这样子书写, T 为 any[] 会照成 Tail<T> 失效。
+// 按照 T 为 any[] 这样子书写, 同样会对传入的参数类型失去校验能力。
 type CurryV2<P extends any[], R> =
-  <T extends any[]>(args: T) => HasTail<P> extends true ? CurryV2<Tail<T>, R> : R
+  <T extends any[]>(...args: T) => HasTail<P> extends true ? CurryV2<Tail<T>, R> : R
 
 declare function curryV2<P extends any[], R>(f: (...args: P) => R): CurryV2<P, R>
 
 const toCurry05 = (name: string, age: number, ...nicknames: string[]) => true
-const curried05 = curryV2(toCurry04)
-const test13 = curried05('Jane', 26, 'JJ', 'Jini')
+const curried05 = curryV2(toCurry05)
+const test13 = curried05('Jane', 26, 'JJ', 'Jini')(26)
+
+// 上述代码的问题是 curried05('Jane', 26, 'JJ', 'Jini') 后只能跟字符串, 但跟着数字也没有报错。
 
 // Recursive types
 /** -------- Last -------- */
@@ -90,3 +92,40 @@ type Drop<N extends number, T extends any[], I extends any[] = []> =
 type test19 = Drop<1, [string, number, boolean]> // [number, boolean]
 
 /** ---------- curryV3 ---------- */
+// type CurryV3<P extends any[], R> =
+//   <T extends any[]>(...args: T) => HasTail<P> extends true ? CurryV2<Tail<T>, R> : R
+type CurryV3<P extends any[], R> =
+  <T extends any[]>(...args: T) => Length<Drop<Length<T>, P>> extends 0 ? R : CurryV3<Drop<Length<T>, P>, R>
+  // HasTail<P> extends true ? CurryV2<Tail<T>, R> : R
+
+declare function curryV3<P extends any[], R>(f: (...args: P) => R): CurryV3<P, R>
+
+const toCurry06 = (name: string, age: number, ...nicknames: string[]) => true
+const curried06 = curryV3(toCurry06)
+const test20 = curried06('Jane', 26, 'JJ', 'Jini') // boolean
+const test21 = curried06('Jane', 26, 'JJ', 'Jini')('hi') // boolean
+
+/** ----------- Cast(抛弃) ----------- */
+type Cast<X, Y> = X extends Y ? X : Y
+
+type test21 = Cast<[string], any> // [string]
+type test22 = Cast<[string], number> // number
+
+/** ---------- curryV4 ---------- */
+type CurryV4<P extends any[], R> =
+  <T extends any[]>(...args: Cast<T, Partial<P>>) => Length<Cast<Drop<Length<T>, P>, any[]>> extends 0
+  ? R : CurryV4<Cast<Drop<Length<T>, P>, any[]>, R>
+// HasTail<P> extends true ? CurryV2<Tail<T>, R> : R
+
+declare function curryV4<P extends any[], R>(f: (...args: P) => R): CurryV4<P, R>
+
+const toCurry07 = (name: string, age: number, single: boolean) => true
+const curried07 = curryV4(toCurry07)
+const test23 = curried07('Jane')(26)(true)
+const test24 = curried07('Jane', 26)(true)
+const test25 = curried07('Jane', 26, true)
+const test26 = curried07('Jane', 26)(26)
+
+// todo analyze Cast<T, Partial<P>>
+
+// read Maybe you thought that
