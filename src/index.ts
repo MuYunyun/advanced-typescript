@@ -36,13 +36,12 @@ const toCurry02 = (name: string, age: number, single: boolean) => true
 const curried02 = curryV0(toCurry02)
 const test9 = curried02('Jane')(26)(true)
 
-/** ---------- curryV1 ---------- */
 // background:
 const toCurry03 = (name: string, age: number, ...nicknames: string[]) => true
 const curried03 = curryV0(toCurry03)
 const test10 = curried03('Jane')(26)('JJ', 'Jini') // error: Expected 1 arguments, but got 2.
 
-/** ---------- curryV0 ---------- */
+/** ---------- curryV1 ---------- */
 type CurryV1<P extends any[], R> =
   (arg0: Head<P>, ...rest: Tail<P>) => HasTail<P> extends true ? CurryV1<Tail<P>, R> : R
 
@@ -80,7 +79,6 @@ type test16 = Length<[any, any]>
 type test17 = Length<[any, any, any]>
 
 /** -------- Prepend -------- */
-// todo
 type Prepend2<E, T extends any[]> = ((head: E, ...args: T) => any) extends ((...args: infer U) => any) ? U : T
 type test18 = Prepend2<string, [number]> // [string, number]
 
@@ -90,20 +88,21 @@ type Drop<N extends number, T extends any[], I extends any[] = []> =
   ? T
   : Drop<N, Tail<T>, Prepend2<any, I>>
 type test19 = Drop<1, [string, number, boolean]> // [number, boolean]
+type dropbug = Drop<3, [string, number, ...string[]]> // expect [...string[]]
 
 /** ---------- curryV3 ---------- */
-// type CurryV3<P extends any[], R> =
-//   <T extends any[]>(...args: T) => HasTail<P> extends true ? CurryV2<Tail<T>, R> : R
 type CurryV3<P extends any[], R> =
   <T extends any[]>(...args: T) => Length<Drop<Length<T>, P>> extends 0 ? R : CurryV3<Drop<Length<T>, P>, R>
-  // HasTail<P> extends true ? CurryV2<Tail<T>, R> : R
 
 declare function curryV3<P extends any[], R>(f: (...args: P) => R): CurryV3<P, R>
 
 const toCurry06 = (name: string, age: number, ...nicknames: string[]) => true
 const curried06 = curryV3(toCurry06)
-const test20 = curried06('Jane', 26, 'JJ', 'Jini') // boolean
-const test21 = curried06('Jane', 26, 'JJ', 'Jini')('hi') // boolean
+const test20 = curried06('Jane')(26)('JJ')
+const test21 = curried06('Jane', 26)(1) // expect error
+const test22 = curried06('Jane', 26, 'JJ')
+
+// 因为此时 T 与 P 类型之间缺少关系绑定, 此时函数中理论上可以传入任意类型的参数, 因此此时可以看到校验全部失效。
 
 /** ----------- Cast(抛弃) ----------- */
 type Cast<X, Y> = X extends Y ? X : Y
@@ -113,19 +112,34 @@ type test22 = Cast<[string], number> // number
 
 /** ---------- curryV4 ---------- */
 type CurryV4<P extends any[], R> =
-  <T extends any[]>(...args: Cast<T, Partial<P>>) => Length<Cast<Drop<Length<T>, P>, any[]>> extends 0
-  ? R : CurryV4<Cast<Drop<Length<T>, P>, any[]>, R>
-// HasTail<P> extends true ? CurryV2<Tail<T>, R> : R
+  <T extends any[]>(...args: Cast<T, Partial<P>>) => Length<Drop<Length<T>, P>> extends 0
+  ? R : CurryV4<Drop<Length<T>, P>, R>
+// 解释: 使用 Cast<T, Partial<P>> 关联 T 与 P 的关系, 若函数传参类型与 Curry 接受类型 P 不匹配, 则保留 P 类型。
 
 declare function curryV4<P extends any[], R>(f: (...args: P) => R): CurryV4<P, R>
 
-const toCurry07 = (name: string, age: number, single: boolean) => true
+const toCurry07 = (name: string, age: number, ...nicknames: string[]) => true
 const curried07 = curryV4(toCurry07)
-const test23 = curried07('Jane')(26)(true)
-const test24 = curried07('Jane', 26)(true)
-const test25 = curried07('Jane', 26, true)
-const test26 = curried07('Jane', 26)(26)
+const test23 = curried07('Jane')(26)('JJ')
+const test24 = curried07('Jane', 26)(1) // 可以看到此时类型校验生效了
+const test25 = curried07('Jane', 26, 'JJ')
+const test26 = curried07('Jane', 26, 'JJ', 'Jini')(26) // 不足的是, 如果末尾使用了 ...nicknames, 此时还是无法满足类型校验。
 
-// todo analyze Cast<T, Partial<P>>
+// 在 CurryV4 版本中, 使用 Length<> extends 0, 作为递归终止条件, 但如果使用者使用了 ...nicknames,
+// 则 Length 的结果始终到达不了 0, 这样就没办法作为递归的终止条件了。
 
-// read Maybe you thought that
+/** ---------- curryV5 ---------- */
+// type test27 = [string] extends [any, ...any[]] ? true : false // true
+type CurryV5<P extends any[], R> =
+  <T extends any[]>(...args: Cast<T, Partial<P>>) => Drop<Length<T>, P> extends [any, ...any[]]
+    ? CurryV5<Drop<Length<T>, P>, R> : R
+declare function curryV5<P extends any[], R>(f: (...args: P) => R): CurryV5<P, R>
+const toCurry08 = (name: string, age: number, ...nicknames: string[]) => true
+const curried08 = curryV5(toCurry08)
+// todo
+const test27 = curried08('Jane')(26)('JJ')
+const test28 = curried08('Jane', 26)(1)
+const test29 = curried08('Jane', 26, 'JJ')
+const test30 = curried08('Jane', 26, 'JJ', 'Jini')(26) // 可以看到, 在满足之前 case 的情况下, 现在也满足了扩展运算符的语法。
+
+todo: read Everything works like a charm
