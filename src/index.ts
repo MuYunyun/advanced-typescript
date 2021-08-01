@@ -79,7 +79,9 @@ type test16 = Length<[any, any]>
 type test17 = Length<[any, any, any]>
 
 /** -------- Prepend -------- */
-type Prepend2<E, T extends any[]> = ((head: E, ...args: T) => any) extends ((...args: infer U) => any) ? U : T
+// 使用函数或者数组都可以实现 Prepend 的效果。
+// type Prepend2<E, T extends any[]> = ((head: E, ...args: T) => any) extends ((...args: infer U) => any) ? U : T
+type Prepend2<E, T extends any[]> = [head: E, ...args: T] extends [...args: infer U] ? U : T
 type test18 = Prepend2<string, [number]> // [string, number]
 
 /** -------- Drop -------- */
@@ -88,7 +90,7 @@ type Drop<N extends number, T extends any[], I extends any[] = []> =
   ? T
   : Drop<N, Tail<T>, Prepend2<any, I>>
 type test19 = Drop<1, [string, number, boolean]> // [number, boolean]
-type dropbug = Drop<3, [string, number, ...string[]]> // expect [...string[]]
+type test191 = Drop<1, [number, string[]]> // [string[]]
 
 /** ---------- curryV3 ---------- */
 type CurryV3<P extends any[], R> =
@@ -132,14 +134,50 @@ const test26 = curried07('Jane', 26, 'JJ', 'Jini')(26) // 不足的是, 如果�
 // type test27 = [string] extends [any, ...any[]] ? true : false // true
 type CurryV5<P extends any[], R> =
   <T extends any[]>(...args: Cast<T, Partial<P>>) => Drop<Length<T>, P> extends [any, ...any[]]
-    ? CurryV5<Drop<Length<T>, P>, R> : R
+    ? CurryV5<Drop<Length<T>, P> extends infer DT ? Cast<DT, any[]> : never, R>
+    : R
 declare function curryV5<P extends any[], R>(f: (...args: P) => R): CurryV5<P, R>
+// const toCurry08 = (name: string, age: number, ...nicknames: string[]) => true
 const toCurry08 = (name: string, age: number, ...nicknames: string[]) => true
 const curried08 = curryV5(toCurry08)
-// todo
-const test27 = curried08('Jane')(26)('JJ')
-const test28 = curried08('Jane', 26)(1)
+
+const test27 = curried08('Jane')(26) // boolean, here we expect it function.
+type aaaaaa = [string] extends [any, ...any[]] ? true : false
+const test28 = curried08('Jane', 26)
 const test29 = curried08('Jane', 26, 'JJ')
 const test30 = curried08('Jane', 26, 'JJ', 'Jini')(26) // 可以看到, 在满足之前 case 的情况下, 现在也满足了扩展运算符的语法。
 
-todo: read Everything works like a charm
+// v5 没有验证成功, 先跳过
+
+type Pos<I extends any[]> = Length<I>
+type Next<I extends any[]> = Prepend2<any, I>
+type Prev<I extends any[]> = Tail<I>
+
+// type iterator = [any, any]
+// type test31 = Pos<iterator> // 2
+// type test32 = Pos<Next<iterator>> // 3
+// type test33 = Pos<Prev<iterator>> // 1
+
+type Iterator1<Index extends number = 0, From extends any[] = [], I extends any[] = []> =
+  Pos<I> extends Index ? From : Iterator1<Index, Next<From>, Next<I>>
+
+// type test34 = Iterator1<2> // [any, any]
+// type test35 = Iterator1<3, [any, any]> // [any, any, any, any, any]
+// type test36 = Pos<test34> // 2
+// type test37 = Pos<test35> // 5
+
+type Reverse<T extends any[], R extends any[] = [], I extends any[] = []> =
+  Pos<I> extends Length<T> ? R : Reverse<T, Prepend2<T[Pos<I>], R>, Next<I>>
+// type test57 = Reverse<[1, 2, 3]> // [3, 2, 1]
+// type test58 = Reverse<test57> // [1, 2, 3]
+// type test59 = Reverse<[2, 1], [3, 4]> // [1, 2, 3, 4]
+
+type Concat<T1 extends any[], T2 extends any[]> = Reverse<Reverse<T1>, T2>
+// type test60 = Concat<[1, 2], [3, 4]> // [1, 2, 3, 4]
+
+type Append<E, T extends any[]> = Concat<T, [E]>
+// type test61 = Append<3, [1, 2]> // [1, 2, 3]
+
+// GapOf 先跳过, 未识别 __
+type GapOf<T1 extends any[], T2 extends any[], TN extends any[], I extends any[]>
+  = T1[Pos<I>] extends __ ? Append<T2[Pos<I>], TN> : TN

@@ -1,7 +1,6 @@
 ### advanced typescript
 
-* [learn-advanced-typescript](https://hackernoon.com/learn-advanced-typescript-4yl727e6)
-  * read: Recursive types
+[learn-advanced-typescript](https://hackernoon.com/learn-advanced-typescript-4yl727e6) 阅读下来有一定难度, 实际编码下来有一些点与原作者不同。
 
 ### note
 
