@@ -1,6 +1,7 @@
 ### advanced typescript
 
-[learn-advanced-typescript](https://hackernoon.com/learn-advanced-typescript-4yl727e6) 阅读下来有一定难度, 实际编码下来有一些点与原作者不同。
+* [learn-advanced-typescript](https://hackernoon.com/learn-advanced-typescript-4yl727e6) 阅读下来有一定难度, 实际编码下来有一些点与原作者不同。
+* [中文版](https://zhuanlan.zhihu.com/p/120441348)
 
 ### note
 
