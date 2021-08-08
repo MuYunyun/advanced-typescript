@@ -39,3 +39,32 @@ type c = { a: true, b: false }
 type d = c extends { a: true } ? true : false // true
 ```
 
+### 如何判断 Typescript 中的两个类型完全相等?
+
+```ts
+// https://github.com/Microsoft/TypeScript/issues/27024#issuecomment-421529650. understanding it is difficult.
+export type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends
+  (<U>() => U extends Y ? 1 : 2) ? true : false
+```
+
+### 将 tuple 转化为对象
+
+可以利用 `tuple[number]` 取得 tuple 的并集。
+
+```ts
+const tuple = ['tesla', 'model 3', 'model X', 'model Y'] as const
+type test = typeof tuple[number] // "tesla" | "model 3" | "model X" | "model Y"
+```
+
+可以利用 `P in T[number]` 进行遍历。
+
+```ts
+type TupleToObject<T extends readonly any[]> = {
+  [P in T[number]]: string
+}
+```
+
+### link
+
+* [ts-toolbelt](https://github.com/millsp/ts-toolbelt)

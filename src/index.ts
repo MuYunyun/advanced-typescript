@@ -181,3 +181,13 @@ type Append<E, T extends any[]> = Concat<T, [E]>
 // GapOf 先跳过, 未识别 __
 type GapOf<T1 extends any[], T2 extends any[], TN extends any[], I extends any[]>
   = T1[Pos<I>] extends __ ? Append<T2[Pos<I>], TN> : TN
+
+
+enum MyFlags {
+  None = 0,
+  Neat = 1,
+  Cool = 4,
+  Awesome = 11,
+  Best = Neat | Cool | Awesome
+}
+var b = MyFlags.Best;

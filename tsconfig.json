@@ -25,6 +25,7 @@
   "include": [
     "test/",
     "src/",
+    "index.d.ts",
   ],
   "exclude": [
     "node_modules"
