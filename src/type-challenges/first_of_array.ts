@@ -1,4 +1,4 @@
-import { Equal, Expect, NotAny } from '../index.d'
+import { Equal, Expect, NotAny } from '../../index.d'
 /*
   14 - First of Array
   -------
@@ -24,7 +24,7 @@ import { Equal, Expect, NotAny } from '../index.d'
 
 /* _____________ Your Code Here _____________ */
 
-type First<T extends any[]> = any
+type First<T extends any[]> = T extends [any, ...any[]] ? T[0] : never
 
 type cases = [
   Expect<Equal<First<[3, 2, 1]>, 3>>,

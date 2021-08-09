@@ -1,4 +1,4 @@
-import { Equal, Expect, NotAny } from '../index.d'
+import { Equal, Expect, NotAny } from '../../index.d'
 
 // expected to be string
 /**-------------- hello world --------------*/
