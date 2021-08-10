@@ -1,4 +1,4 @@
-import { Equal, Expect, NotAny } from '../..'
+import { Equal, Expect, NotAny } from '../../../index.d'
 
 /**-------------- pick --------------*/
 interface Todo {

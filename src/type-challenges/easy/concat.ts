@@ -1,4 +1,4 @@
-import { Equal, Expect, NotAny } from '../../index.d'
+import { Equal, Expect, NotAny } from '../../../index.d'
 /*
   533 - Concat
   -------
@@ -19,9 +19,7 @@ import { Equal, Expect, NotAny } from '../../index.d'
 
 
 /* _____________ Your Code Here _____________ */
-
-type Concat<T, U> = any
-
+type Concat<T extends any[], U extends any[]> = [...T, ...U]
 
 /* _____________ Test Cases _____________ */
 type cases = [

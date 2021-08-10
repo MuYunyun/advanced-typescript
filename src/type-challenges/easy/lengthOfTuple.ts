@@ -1,4 +1,4 @@
-import { Equal, Expect, NotAny } from '../../index.d'
+import { Equal, Expect, NotAny } from '../../../index.d'
 /*
   18 - Length of Tuple
   -------
