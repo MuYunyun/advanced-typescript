@@ -27,7 +27,7 @@ import { Equal, Expect, NotAny } from '../../../index.d'
 
 /* _____________ Your Code Here _____________ */
 
-type MyReturnType<T> = () => infer U extends T ? U : never
+type MyReturnType<T extends Function> = T extends (...args: any) => infer U ? U : never
 
 /* _____________ Test Cases _____________ */
 type cases = [
@@ -48,7 +48,6 @@ type ComplexObject = {
 
 const fn = (v: boolean) => v ? 1 : 2
 const fn1 = (v: boolean, w: any) => v ? 1 : 2
-
 
 
 /* _____________ Further Steps _____________ */

@@ -26,11 +26,16 @@ type Includes<T extends readonly any[], U> = {
   [P in T[number]]: true
 }[U] extends true ? true : false;
 
-
+// 如下解法的讨论: https://github.com/type-challenges/type-challenges/issues/1915
 // type Includes<T extends readonly any[], U> = 'has' extends {
-  //   [K in keyof T]: T[K] extends U ? 'has' : 'no'
+//     [K in keyof T]: T[K] extends U ? 'has' : 'no'
 // }[number] ? true : false
 // type aaaa = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'>
+
+// type Type = ['Kars', 'Esidisi', 'Wamuu', 'Santana']
+// type Result = {     // --------------- false ---------------
+//   [K in keyof Type]: Type[K] extends 'Kars' ? 'has' : 'no'
+// }
 
 /* _____________ Test Cases _____________ */
 type cases = [
