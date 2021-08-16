@@ -1,9 +1,9 @@
 import { Equal, Expect, NotAny } from '../../../index.d'
 
-type OmitKey<T, K> = K extends T ? never : K
+type myExclude<T, K> = T extends K ? never : T
 // type MyOmit<T, K> =
 
-type ccc = OmitKey<'a' | 'b' | 'c', 'a'>
+type ccc = myExclude<'a' | 'b' | 'c', 'a'>
 
 type ddd = 'a' extends 'a' | 'b' | 'c' ? true : false
 

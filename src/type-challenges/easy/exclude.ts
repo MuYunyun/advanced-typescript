@@ -12,10 +12,15 @@ import { Equal, Expect, NotAny } from '../../../index.d'
   > View on GitHub: https://tsch.js.org/43
 */
 
-
 /* _____________ Your Code Here _____________ */
-
+// type MyExclude<T, U> = T extends U ? never : T
 type MyExclude<T, U> = T extends U ? never : T
+
+// 'a' extends 'a' -> never
+// 'b' extends 'a' -> 'b'
+// 'c' extends 'a' -> 'c'
+
+type ccc = MyExclude<'a' | 'b' | 'c', 'a'>
 
 /* _____________ Test Cases _____________ */
 type cases = [
