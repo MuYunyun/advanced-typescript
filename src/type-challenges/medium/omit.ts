@@ -1,15 +1,13 @@
 import { Equal, Expect, NotAny } from '../../../index.d'
 
 type myExclude<T, K> = T extends K ? never : T
-// type MyOmit<T, K> =
-
-type ccc = myExclude<'a' | 'b' | 'c', 'a'>
-
-type ddd = 'a' extends 'a' | 'b' | 'c' ? true : false
+type MyOmit<T, K> = {
+  [P in myExclude<keyof T, K>]: T[P]
+}
 
 /* _____________ Test Cases _____________ */
 type cases = [
-  Expect<Equal<Expected1, MyOmit<Todo, 'description'>>>,
+  Expect<Equal<Expected1, Omit<Todo, 'description'>>>,
   Expect<Equal<Expected2, MyOmit<Todo, 'description' | 'completed'>>>
 ]
 
