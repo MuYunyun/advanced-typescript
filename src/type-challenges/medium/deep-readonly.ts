@@ -1,7 +1,9 @@
 import { Equal, Expect } from '../../../index.d'
 
 type DeepReadonly<T> = {
-  readonly [P in keyof T]: T[P]
+  readonly [P in keyof T]: T[P] extends Record<any, any>
+    ? T[P] extends Function ? T[P] : DeepReadonly<T[P]>
+    : T[P]
 }
 
 type cases = [
