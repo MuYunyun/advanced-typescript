@@ -41,12 +41,10 @@ import { Equal, Expect, Alike, NotAny } from '../../../index.d'
 
 
 /* _____________ Your Code Here _____________ */
-
 type Chainable = {
   option(key: string, value: any): any
   get(): any
 }
-
 
 /* _____________ Test Cases _____________ */
 declare const a: Chainable
