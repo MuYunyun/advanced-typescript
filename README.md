@@ -1,20 +1,6 @@
-### note
+## note
 
-1. typescript 中的执行顺序。
-
-```ts
-type CurryV0<P extends any[], R> =
-  (arg0: Head<P>) => HasTail<P> extends true ? CurryV0<Tail<P>, R> : R
-```
-
-is equal to:
-
-```ts
-type CurryV0<P extends any[], R> =
-  (arg0: Head<P>) => (HasTail<P> extends true ? CurryV0<Tail<P>, R> : R)
-```
-
-2. 关于 declare。
+关于 declare。
 
 ```ts
 declare function curryV0<P extends any[], R>(f: (...args: P) => R): CurryV0<P, R>
@@ -25,16 +11,13 @@ const test9 = curried02('Jane')(26)(true)
 
 此处 declare 用于声明了 curryV0 函数类型。咋一看为啥可以直接调用 `curryV0(toCurry02)`, 想了一下, 其实此处的 curryV0 有一码双关的意思, 即既运行`Typescript 类型函数`又暗含运行`Javascript 函数`。
 
-3. ※ extends 字段语义
+## extends
 
-如下 case 结果
+当 extends 用于表示条件判断时，可以总结如下规律：
 
-```ts
-type c = { a: true, b: false }
-type d = c extends { a: true } ? true : false // true
-```
+* 精确度高 extends 精确度低时为 true。
 
------------------- 分割线 ------------------
+### 泛型类型中的 extends
 
 考虑如下 Demo 类型定义:
 
@@ -64,6 +47,31 @@ Demo(['a', 'b', 'c'], 'a') // ['never', 'b', 'c']
 此外根据 [never 类型](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#the-never-type)的定义 —— never 类型可分配给每种类型，但是没有类型可以分配给 never（除了 never 本身）。即 `never | 'b' | 'c'` 等价于 `'b' | 'c'`。
 
 因此 `Demo<'a' | 'b' | 'c', 'a'>` 结果并不是 never 而是 `'b' | 'c'`。而 Demo 类型的声明其实就是 TS 官方提供的 `Exclude<Type, ExcludedUnion>`。
+
+### 对象中的 extends
+
+```ts
+type obj = { a: true, b: false }
+type result = obj extends { a: true } ? true : false // true
+```
+
+可以得出规律，在对象中指定 key 越多，则其类型定义越精确。
+
+### extends 优先级
+
+此外 extends 的执行优先级是比较高的(to do: 精确表达):
+
+```ts
+type CurryV0<P extends any[], R> =
+  (arg0: Head<P>) => HasTail<P> extends true ? CurryV0<Tail<P>, R> : R
+```
+
+is equal to:
+
+```ts
+type CurryV0<P extends any[], R> =
+  (arg0: Head<P>) => (HasTail<P> extends true ? CurryV0<Tail<P>, R> : R)
+```
 
 ### 如何判断 Typescript 中的两个类型完全相等?
 
@@ -95,3 +103,8 @@ type TupleToObject<T extends readonly any[]> = {
 
 * [learn-advanced-typescript](https://hackernoon.com/learn-advanced-typescript-4yl727e6) 阅读下来有一定难度, 实际编码下来有一些点与原作者不同。
 * [中文版](https://zhuanlan.zhihu.com/p/120441348)
+
+### Todo
+
+* chainableOptions
+* promiseAll
