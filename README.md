@@ -11,13 +11,21 @@ const test9 = curried02('Jane')(26)(true)
 
 此处 declare 用于声明了 curryV0 函数类型。咋一看为啥可以直接调用 `curryV0(toCurry02)`, 想了一下, 其实此处的 curryV0 有一码双关的意思, 即既运行`Typescript 类型函数`又暗含运行`Javascript 函数`。
 
-## extends
+## 用于条件判断时的 extends
 
-当 extends 用于表示条件判断时，可以总结如下规律：
+当 extends 用于表示条件判断时，可以总结规律：`范围狭窄 extends 范围宽泛时结果为 true，反之为 false`。
 
-* 精确度高 extends 精确度低时为 true。
+```ts
+type demo = string extends string | number ? true : false // true
+```
 
-### 泛型类型中的 extends
+当 extends 作用于对象时，若在对象中指定的 key 越多，则其类型定义的范围越狭窄，可以参考如下例子。
+
+```ts
+type result = { a: true, b: false } extends { a: true } ? true : false // true
+```
+
+## 泛型类型中的 extends
 
 考虑如下 Demo 类型定义:
 
@@ -48,29 +56,14 @@ Demo(['a', 'b', 'c'], 'a') // ['never', 'b', 'c']
 
 因此 `Demo<'a' | 'b' | 'c', 'a'>` 结果并不是 never 而是 `'b' | 'c'`。而 Demo 类型的声明其实就是 TS 官方提供的 `Exclude<Type, ExcludedUnion>`。
 
-### 对象中的 extends
+## 在箭头函数中使用 extends
 
-```ts
-type obj = { a: true, b: false }
-type result = obj extends { a: true } ? true : false // true
-```
+官网中关于运算符 extends 运算符的优先级，在如下的类型定义中
 
-可以得出规律，在对象中指定 key 越多，则其类型定义越精确。
-
-### extends 优先级
-
-此外 extends 的执行优先级是比较高的(to do: 精确表达):
-
-```ts
+```diff
 type CurryV0<P extends any[], R> =
-  (arg0: Head<P>) => HasTail<P> extends true ? CurryV0<Tail<P>, R> : R
-```
-
-is equal to:
-
-```ts
-type CurryV0<P extends any[], R> =
-  (arg0: Head<P>) => (HasTail<P> extends true ? CurryV0<Tail<P>, R> : R)
+-  (arg0: Head<P>) => HasTail<P> extends true ? CurryV0<Tail<P>, R> : R
++  (arg0: Head<P>) => (HasTail<P> extends true ? CurryV0<Tail<P>, R> : R)
 ```
 
 ### 如何判断 Typescript 中的两个类型完全相等?
