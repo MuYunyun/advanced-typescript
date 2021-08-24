@@ -9,20 +9,29 @@ const curried02 = curryV0(toCurry02)
 const test9 = curried02('Jane')(26)(true)
 ```
 
-此处 declare 用于声明了 curryV0 函数类型。咋一看为啥可以直接调用 `curryV0(toCurry02)`, 想了一下, 其实此处的 curryV0 有一码双关的意思, 即既运行`Typescript 类型函数`又暗含运行`Javascript 函数`。
+此处 declare 用于声明了 curryV0 函数类型。咋一看为啥可以直接调用 `curryV0(toCurry02)`, 想了一下, 其实此处的 curryV0 有一码双关的意思, 即既运行 `Typescript 类型函数`又暗含运行`Javascript 函数`。
 
 ## 用于条件判断时的 extends
 
-当 extends 用于表示条件判断时，可以总结规律：`范围狭窄 extends 范围宽泛时结果为 true，反之为 false`。
+当 extends 用于表示条件判断时，可以总结出以下规律
+
+1. 同一类型的子类型在使用 extends 时，extends 语义可解释为等于。
 
 ```ts
-type demo = string extends string | number ? true : false // true
+type result1 = 'a' extends 'abc' ? true : false // false
+type result2 = 123 extends 1 ? true : false // false
 ```
 
-当 extends 作用于对象时，若在对象中指定的 key 越多，则其类型定义的范围越狭窄，可以参考如下例子。
+2. `狭窄类型 extends 宽泛类型`且`宽泛类型中包含狭窄类型`时结果为 true，反之为 false。
 
 ```ts
-type result = { a: true, b: false } extends { a: true } ? true : false // true
+type result3 = string extends string | number ? true : false // true
+```
+
+3. 当 extends 作用于对象时，若在对象中指定的 key 越多，则其类型定义的范围越狭窄，可以参考如下例子。
+
+```ts
+type result4 = { a: true, b: false } extends { a: true } ? true : false // true
 ```
 
 ## 泛型类型中的 extends
@@ -58,13 +67,40 @@ Demo(['a', 'b', 'c'], 'a') // ['never', 'b', 'c']
 
 ## 在箭头函数中使用 extends
 
-官网中关于运算符 extends 运算符的优先级，在如下的类型定义中
+在箭头函数中使用三元表达式时，从左向右的阅读习惯导致函数内容区若不加括号则会让使用方感到困惑。比如下方代码中 x 是函数类型还是布尔类型呢？
 
-```diff
-type CurryV0<P extends any[], R> =
--  (arg0: Head<P>) => HasTail<P> extends true ? CurryV0<Tail<P>, R> : R
-+  (arg0: Head<P>) => (HasTail<P> extends true ? CurryV0<Tail<P>, R> : R)
+```js
+// The intent is not clear.
+var x = a => 1 ? true : false;
 ```
+
+在 eslint 规则 [no-confusing-arrow](https://eslint.org/docs/rules/no-confusing-arrow) 中，推荐如下写法：
+
+```js
+var x = a => (1 ? true : false);
+```
+
+在 TypeScript 的类型定义中若在箭头函数中使用 extends 也是同理，一眼看如下代码也是比较绕，
+
+Todo: 换一个 Demo
+
+```ts
+type CurryV0<P extends any[], R> =
+  (arg0: Head<P>) => HasTail<P> extends true ? CurryV0<Tail<P>, R> : R
+```
+
+因此在箭头函数中使用 extends 建议加上括号，对 code review 很有帮助。
+
+```ts
+type CurryV0<P extends any[], R> =
+  (arg0: Head<P>) => (HasTail<P> extends true ? CurryV0<Tail<P>, R> : R)
+```
+
+## 结合类型推导使用 extends
+
+TypeScript 中有一个语法 [infer]()，使用它可以实现推导类型的目的。一般会结合 extends 来使用 infer。比如：
+
+todo:
 
 ### 如何判断 Typescript 中的两个类型完全相等?
 
