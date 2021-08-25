@@ -102,7 +102,9 @@ TypeScript 中有一个语法 [infer]()，使用它可以实现推导类型的�
 
 todo:
 
-### 如何判断 Typescript 中的两个类型完全相等?
+### 使用 extends 来判断两个类型完全相等
+
+todo: 解释下面逻辑
 
 ```ts
 // https://github.com/Microsoft/TypeScript/issues/27024#issuecomment-421529650. understanding it is difficult.
