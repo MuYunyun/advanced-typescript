@@ -19,8 +19,9 @@ import { Equal, Expect, Alike, NotAny } from '../../..'
 
 /* _____________ Your Code Here _____________ */
 
-type Permutation<T> = any
+type Permutation<T> = T extends infer Type ? [Type] : never
 
+type aaa = Permutation<'A' | 'B' | 'C'>
 
 /* _____________ Test Cases _____________ */
 type cases = [

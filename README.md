@@ -139,3 +139,4 @@ type TupleToObject<T extends readonly any[]> = {
 
 * chainableOptions
 * promiseAll
+* permutation
