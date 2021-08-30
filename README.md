@@ -104,8 +104,6 @@ todo:
 
 ### 使用 extends 来判断两个类型完全相等
 
-todo: 解释下面逻辑
-
 ```ts
 // https://github.com/Microsoft/TypeScript/issues/27024#issuecomment-421529650. understanding it is difficult.
 export type Equal<X, Y> =
