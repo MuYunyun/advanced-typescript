@@ -111,7 +111,7 @@ export type Equal<X, Y> =
   (<U>() => U extends Y ? 1 : 2) ? true : false
 ```
 
-### 将 tuple 转化为对象
+## 将 tuple 转化为对象
 
 可以利用 `tuple[number]` 取得 tuple 的并集。
 
@@ -128,12 +128,65 @@ type TupleToObject<T extends readonly any[]> = {
 }
 ```
 
-### link
+## 在对象中使用交、并集
+
+在对象中使用 `|` 与 `&`，与在非对象中使用存在语义上的差异。
+
+在集合对象中使用联合类型 `|` ，官网 [working-with-union-types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#working-with-union-types) 有如下说明:
+
+> Notice that given two sets with corresponding facts about each set, only the intersection of those facts applies to the union of the sets themselves.
+
+```ts
+type Foo = {
+  name: string
+  age: string
+}
+type Bar = {
+  name: string
+  age: string
+  gender: number
+}
+
+type result = keyof (Foo | Bar) // "name" | "age"
+```
+
+在集合对象中使用交集类型 `&` ，可以见 [intersection-types](https://www.typescriptlang.org/docs/handbook/2/objects.html#intersection-types) 给出的 demo:
+
+```ts
+interface Colorful {
+  color: string;
+}
+interface Circle {
+  radius: number;
+}
+
+type ColorfulCircle = keyof (Colorful & Circle) // "color" | "radius"
+```
+
+结合 `&` 与 `|` 的使用，我们能立马写出比如类型 `diff`
+
+```ts
+type Diff<O, O1> = Omit<O & O1, keyof (O | O1)>
+
+type Foo = {
+  name: string
+  age: string
+}
+type Bar = {
+  name: string
+  age: string
+  gender: number
+}
+
+type result = Diff<Foo, Bar> // { gender: number }
+```
+
+## link
 
 * [learn-advanced-typescript](https://hackernoon.com/learn-advanced-typescript-4yl727e6) 阅读下来有一定难度, 实际编码下来有一些点与原作者不同。
 * [中文版](https://zhuanlan.zhihu.com/p/120441348)
 
-### Todo
+## Todo
 
 * chainableOptions
 * promiseAll

@@ -19,8 +19,6 @@ type CamelCase<S extends String> = S extends `${infer First}-${infer Right}`
     : `${First}${CamelCase<Capitalize<Right>>}`
   : S
 
-type abcde = CamelCase<'foo--bar----baz'>
-
 /* _____________ Test Cases _____________ */
 type cases = [
   Expect<Equal<CamelCase<'foo-bar-baz'>, 'fooBarBaz'>>,
@@ -35,8 +33,6 @@ type cases = [
   Expect<Equal<CamelCase<''>, ''>>,
   Expect<Equal<CamelCase<'😎'>, '😎'>>,
 ]
-
-
 
 /* _____________ Further Steps _____________ */
 /*
