@@ -191,3 +191,4 @@ type result = Diff<Foo, Bar> // { gender: number }
 * chainableOptions
 * promiseAll
 * permutation
+* isUnion
