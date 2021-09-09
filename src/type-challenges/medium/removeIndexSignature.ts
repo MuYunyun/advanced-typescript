@@ -26,14 +26,6 @@ import { Equal, Expect, Alike, NotAny } from '../../..'
 
 
 /* _____________ Your Code Here _____________ */
-
-// type RemoveIndexSignature<T> = {
-//   [P in keyof T]: string extends P
-//     ? never
-//   : number extends P
-//       ? never
-//       : T[P]
-// }
 type RemoveIndexSignature<T> = {
   [P in keyof T as string extends P
     ? never
