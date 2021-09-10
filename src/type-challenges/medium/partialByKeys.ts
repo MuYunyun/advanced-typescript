@@ -26,13 +26,15 @@ import { Equal, Expect, Alike, NotAny } from '../../..'
   > View on GitHub: https://tsch.js.org/2757
 */
 
-
 /* _____________ Your Code Here _____________ */
-type PartialByKeys<T, K> = {
-  [P in keyof T]?: T[P]
+type Result<O> = {
+  [P in keyof O]: O[P]
 }
-
-type aaa = PartialByKeys<User, 'name'>
+type PartialByKeys<T, K = keyof T> = Result<{
+  [P in keyof T as P extends K ? P : never]?: T[P]
+} & {
+  [P in Exclude<keyof T, K>]: T[P]
+}>
 
 /* _____________ Test Cases _____________ */
 interface User {
@@ -53,6 +55,8 @@ interface UserPartialNameAndAge {
   address: string
 }
 
+type aaa = PartialByKeys<User>
+
 type cases = [
   Expect<Equal<PartialByKeys<User, 'name'>, UserPartialName>>,
   Expect<Equal<PartialByKeys<User, 'name' | 'unknown'>, UserPartialName>>,
@@ -60,12 +64,9 @@ type cases = [
   Expect<Equal<PartialByKeys<User>, Partial<User>>>,
 ]
 
-
-
 /* _____________ Further Steps _____________ */
 /*
   > Share your solutions: https://tsch.js.org/2757/answer
   > View solutions: https://tsch.js.org/2757/solutions
   > More Challenges: https://tsch.js.org
 */
-
