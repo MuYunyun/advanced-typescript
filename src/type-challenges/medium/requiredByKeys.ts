@@ -29,9 +29,14 @@ import { Equal, Expect, Alike, NotAny } from '../../..'
 
 
 /* _____________ Your Code Here _____________ */
-
-type RequiredByKeys<T, K> = any
-
+type Result<T> = {
+  [P in keyof T]: T[P]
+}
+type RequiredByKeys<T, K = keyof T> = Result<{
+  [P in keyof T as P extends K ? P : never]-?: T[P]
+} & {
+  [P in Exclude<keyof T, K>]?: T[P]
+}>
 
 /* _____________ Test Cases _____________ */
 interface User {
@@ -59,12 +64,9 @@ type cases = [
   Expect<Equal<RequiredByKeys<User>, Required<User>>>,
 ]
 
-
-
 /* _____________ Further Steps _____________ */
 /*
   > Share your solutions: https://tsch.js.org/2759/answer
   > View solutions: https://tsch.js.org/2759/solutions
   > More Challenges: https://tsch.js.org
 */
-
