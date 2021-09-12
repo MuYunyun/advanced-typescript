@@ -1,53 +1,52 @@
 import { Equal, Expect, Alike, NotAny } from '../../..'
 
 /*
-  2793 - Mutable
+  2852 - OmitByType
   -------
-  by jiangshan (@jiangshanmeta) #medium #readonly #object-keys
+  by jiangshan (@jiangshanmeta) #medium #object
 
   ### Question
 
-  Implement the generic ```Mutable<T>``` which makes all properties in ```T``` mutable (not readonly).
+  From ```T```, pick a set of properties whose type are not assignable to ```U```.
 
-  For example
+  For Example
 
   ```typescript
-  interface Todo {
-    readonly title: string
-    readonly description: string
-    readonly completed: boolean
-  }
-
-  type MutableTodo = Mutable<T> // { title: string; description: string; completed: boolean; }
-
+  type OmitBoolean = OmitByType<{
+    name: string
+    count: number
+    isReadonly: boolean
+    isEnable: boolean
+  }, boolean> // { name: string; count: number }
   ```
 
-  > View on GitHub: https://tsch.js.org/2793
+  > View on GitHub: https://tsch.js.org/2852
 */
 
 
 /* _____________ Your Code Here _____________ */
-type Mutable<T> = {
-  -readonly [P in keyof T]: T[P]
+type OmitByType<T, U> = {
+  [P in keyof T as T[P] extends U ? never : P]: T[P]
 }
 
+
 /* _____________ Test Cases _____________ */
-interface Todo1 {
-  title: string
-  description: string
-  completed: boolean
-  meta: {
-    author: string
-  }
+interface Model {
+  name: string
+  count: number
+  isReadonly: boolean
+  isEnable: boolean
 }
 
 type cases = [
-  Expect<Equal<Mutable<Readonly<Todo1>>, Todo1>>,
+  Expect<Equal<OmitByType<Model, boolean>, { name: string; count: number }>>,
+  Expect<Equal<OmitByType<Model, string>, { count: number; isReadonly: boolean; isEnable: boolean }>>,
+  Expect<Equal<OmitByType<Model, number>, { name: string; isReadonly: boolean; isEnable: boolean }>>,
 ]
 
 /* _____________ Further Steps _____________ */
 /*
-  > Share your solutions: https://tsch.js.org/2793/answer
-  > View solutions: https://tsch.js.org/2793/solutions
+  > Share your solutions: https://tsch.js.org/2852/answer
+  > View solutions: https://tsch.js.org/2852/solutions
   > More Challenges: https://tsch.js.org
 */
