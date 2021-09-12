@@ -20,15 +20,13 @@ import { Equal, Expect, Alike, NotAny } from '../../..'
 
 
 /* _____________ Your Code Here _____________ */
-type Shift<T> = any
+type Shift<T extends any[]> = T extends [infer _, ...infer O] ? O : never
 
 /* _____________ Test Cases _____________ */
 type cases = [
   Expect<Equal<Shift<[3, 2, 1]>, [2, 1]>>,
   Expect<Equal<Shift<['a', 'b', 'c', 'd',]>, ['b', 'c', 'd']>>,
 ]
-
-
 
 /* _____________ Further Steps _____________ */
 /*
