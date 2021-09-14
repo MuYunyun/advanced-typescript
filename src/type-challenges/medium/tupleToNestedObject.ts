@@ -17,14 +17,17 @@ import { Equal, Expect, Alike, NotAny } from '../../..'
 
   > View on GitHub: https://tsch.js.org/3188
 */
-
-
-// type aaa = ['1']['length'] extends 1 ? true : false
-
 /* _____________ Your Code Here _____________ */
-type Shift<T extends any[]> = T extends [infer _, ...infer O] ? O : never
+// type Shift<T extends any[]> = T extends [infer _, ...infer O] ? O : never
 
-type TupleToNestedObject<T extends any[], U> = T['length']
+type TupleToNestedObject<T extends any[], U> = T extends [infer L, ...infer Others]
+  ? L extends string
+    ? {
+      [V in L]: TupleToNestedObject<Others, U>
+    }
+    : never
+  : U
+  // T['length'] extends 0
 // TupleToNestedObject<Shift<T>>
 
 /* _____________ Test Cases _____________ */
