@@ -42,9 +42,9 @@ type result4 = { a: true, b: false } extends { a: true } ? true : false // true
 type Demo<T, U> = T extends U ? never : T
 ```
 
-因为 `'a' | 'b' | 'c' extends 'a'` 是 false, 所以 `Demo<'a' | 'b' | 'c', 'a'>` 结果是 never 么?
+因为 `'a' | 'b' | 'c' extends 'a'` 是 false, 所以 `Demo<'a' | 'b' | 'c', 'a'>` 结果是 `'a' | 'b' | 'c'` 么?
 
-TypeScript [官方文档](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html)提到:
+查阅[官网](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html)，其中有提到:
 
 > When conditional types act on a generic type, they become distributive when given a union type.
 
@@ -63,7 +63,22 @@ Demo(['a', 'b', 'c'], 'a') // ['never', 'b', 'c']
 
 此外根据 [never 类型](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#the-never-type)的定义 —— never 类型可分配给每种类型，但是没有类型可以分配给 never（除了 never 本身）。即 `never | 'b' | 'c'` 等价于 `'b' | 'c'`。
 
-因此 `Demo<'a' | 'b' | 'c', 'a'>` 结果并不是 never 而是 `'b' | 'c'`。而 Demo 类型的声明其实就是 TS 官方提供的 `Exclude<Type, ExcludedUnion>`。
+因此 `Demo<'a' | 'b' | 'c', 'a'>` 结果并不是 `'a' | 'b' | 'c'` 而是 `'b' | 'c'`。而 Demo 类型的声明其实就是 TS 官方提供的 `Exclude<Type, ExcludedUnion>`。
+
+### 逃离舱
+
+如果想让 `Demo<'a' | 'b' | 'c', 'a'>` 的结果为 `'a' | 'b' | 'c'` 是否可以实现呢? 根据[官网](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#distributive-conditional-types)描述:
+
+> Typically, distributivity is the desired behavior. To avoid that behavior, you can surround each side of the extends keyword with square brackets.
+
+如果不想遍历泛型中的每一个类型，可以用方括号将 extends 关键字的每一侧括起来。
+
+```ts
+type Demo<T, U> = [T] extends [U] ? never : T
+
+// result 此时类型为 'a' | 'b' | 'c'
+type result = Demo<'a' | 'b' | 'c', 'a'>
+```
 
 ## 在箭头函数中使用 extends
 
