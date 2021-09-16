@@ -28,10 +28,10 @@ import { Equal, Expect, Alike, NotAny } from '../../..'
   > View on GitHub: https://tsch.js.org/17
 */
 
-
 /* _____________ Your Code Here _____________ */
-
-declare function Currying(fn: any): any
+declare function Currying(fn: any): typeof fn extends (...args: [infer First, ...infer Others]) => true
+  ? (...args: any) => any
+  : never
 
 /* _____________ Test Cases _____________ */
 const curried1 = Currying((a: string, b: number, c: boolean) => true)
