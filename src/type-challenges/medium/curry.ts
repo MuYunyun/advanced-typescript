@@ -37,21 +37,15 @@ import { Equal, Expect, Alike, NotAny } from '../../..'
 
 // declare function Currying<T extends any[], R>(fn: (...args: T) => R): Curry<T, R>
 
-type Curry<P, R> = P extends [infer K, ...infer O] ? (a: K) => Curry<O, R> : R;
-declare function Currying<P extends any[], R, F>(fn: F):
-  F extends (...args: P) => R
-    ? Curry<P, ReturnType<F>>
-    : never;
-
-// todo why https://github.com/type-challenges/type-challenges/issues/1034 can.
+type Curry<P, R> = P extends [infer K, ...infer O] ? (a: K) => Curry<O, R> : R
+declare function Currying<F>(fn: F):
+  F extends (...args: infer P) => infer R
+    ? Curry<P, R>
+    : never
 
 /* _____________ Test Cases _____________ */
 const curried1 = Currying((a: string, b: number, c: boolean) => true)
 const curried2 = Currying((a: string, b: number, c: boolean, d: boolean, e: boolean, f: string, g: boolean) => true)
-
-const aaaaa = (a: string) => (a: number) => (a: boolean) => true
-
-type demo = typeof curried1
 
 type cases = [
   Expect<Equal<
@@ -69,4 +63,3 @@ type cases = [
   > View solutions: https://tsch.js.org/17/solutions
   > More Challenges: https://tsch.js.org
 */
-

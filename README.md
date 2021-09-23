@@ -1,16 +1,5 @@
 ## note
 
-关于 declare。
-
-```ts
-declare function curryV0<P extends any[], R>(f: (...args: P) => R): CurryV0<P, R>
-const toCurry02 = (name: string, age: number, single: boolean) => true
-const curried02 = curryV0(toCurry02)
-const test9 = curried02('Jane')(26)(true)
-```
-
-此处 declare 用于声明了 curryV0 函数类型。咋一看为啥可以直接调用 `curryV0(toCurry02)`, 想了一下, 其实此处的 curryV0 有一码双关的意思, 即既运行 `Typescript 类型函数`又暗含运行`Javascript 函数`。
-
 ## 用于条件判断时的 extends
 
 当 extends 用于表示条件判断时，可以总结出以下规律
@@ -194,6 +183,38 @@ type Bar = {
 }
 
 type result = Diff<Foo, Bar> // { gender: number }
+```
+
+## 使用 declare 声明
+
+使用 declare 声明，可以将类型可以收拢在一处定义。使用 declare 可以定义以下类型：
+
+* 使用 declare 声明变量。
+
+```ts
+declare const foo: number;
+```
+
+* 使用 declare 声明函数。
+
+```ts
+declare function greet(greeting: string): void;
+```
+
+注意的是，使用 declare 声明的变量与函数指向到具体的值，若要获取其类型定义，则需要使用 typeof。
+
+```ts
+type fooType = typeof foo
+type greetType = typeof greet
+```
+
+* 此外还可以使用 declare 来声明命名空间，命名空间适合第三方库的定义。
+
+```ts
+declare namespace GreetingLib {
+  interface A {}
+  interface B {}
+}
 ```
 
 ## link
