@@ -29,14 +29,6 @@ import { Equal, Expect, Alike, NotAny } from '../../..'
 */
 
 /* _____________ Your Code Here _____________ */
-// declare function Currying(fn: any): typeof fn extends (...args: [infer First, ...infer Others]) => true
-//   ? (arg: First) => Currying<(...args: Others) => true>
-//   : true
-
-// type Curry<T, R> = T extends [infer First, ...infer Others] ? (f: First) => Curry<Others, R> : R
-
-// declare function Currying<T extends any[], R>(fn: (...args: T) => R): Curry<T, R>
-
 type Curry<P, R> = P extends [infer K, ...infer O] ? (a: K) => Curry<O, R> : R
 declare function Currying<F>(fn: F):
   F extends (...args: infer P) => infer R
